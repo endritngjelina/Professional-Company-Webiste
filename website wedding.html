@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eternal Moments - Luxury Wedding Planning</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+        
+        .playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #d4af37, #f7e7ce);
+            border-radius: 4px;
+        }
+        
+        /* Three.js canvas */
+        #hero-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.7;
+        }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #d4af37, #f7e7ce, #d4af37);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Floating animation */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Hover effects */
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Navigation */
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #d4af37, #f7e7ce);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        /* Services cards */
+        .service-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .service-card:hover::before {
+            left: 100%;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #d4af37, #f7e7ce);
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 1rem;
+            width: 14px;
+            height: 14px;
+            background: #d4af37;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        /* Testimonial cards */
+        .testimonial-card {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            animation: rotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .testimonial-card:hover::before {
+            opacity: 1;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Gallery */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.8), rgba(247, 231, 206, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        /* Button styles */
+        .btn-luxury {
+            background: linear-gradient(135deg, #d4af37, #f7e7ce);
+            border: none;
+            color: #000;
+            font-weight: 600;
+            padding: 15px 40px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-luxury::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f7e7ce, #d4af37);
+            transition: left 0.3s ease;
+        }
+        
+        .btn-luxury:hover::before {
+            left: 0;
+        }
+        
+        .btn-luxury span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-luxury:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        /* Parallax sections */
+        .parallax {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* Contact form */
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            color: white;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem !important;
+            }
+        }
+        
+        /* Loading animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.3);
+            border-top: 3px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease;
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s ease;
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2 class="playfair gradient-text text-2xl">Creating Magic...</h2>
+        </div>
+    </div>
+
+    <!-- Three.js Background -->
+    <canvas id="hero-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold playfair gradient-text">
+                    Eternal Moments
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-item hover:text-yellow-400 transition-colors">Home</a>
+                    <a href="#about" class="nav-item hover:text-yellow-400 transition-colors">About</a>
+                    <a href="#services" class="nav-item hover:text-yellow-400 transition-colors">Services</a>
+                    <a href="#gallery" class="nav-item hover:text-yellow-400 transition-colors">Gallery</a>
+                    <a href="#testimonials" class="nav-item hover:text-yellow-400 transition-colors">Testimonials</a>
+                    <a href="#contact" class="nav-item hover:text-yellow-400 transition-colors">Contact</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden glass border-t border-gray-800 hidden">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#home" class="block hover:text-yellow-400 transition-colors">Home</a>
+                <a href="#about" class="block hover:text-yellow-400 transition-colors">About</a>
+                <a href="#services" class="block hover:text-yellow-400 transition-colors">Services</a>
+                <a href="#gallery" class="block hover:text-yellow-400 transition-colors">Gallery</a>
+                <a href="#testimonials" class="block hover:text-yellow-400 transition-colors">Testimonials</a>
+                <a href="#contact" class="block hover:text-yellow-400 transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative">
+        <div class="text-center z-10 px-6">
+            <h1 class="hero-title text-6xl md:text-8xl font-light playfair gradient-text mb-6 float">
+                Where Dreams
+                <br>
+                <span class="font-normal">Become Reality</span>
+            </h1>
+            <p class="hero-subtitle text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Crafting extraordinary weddings that tell your unique love story with unparalleled elegance and sophistication
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button class="btn-luxury">
+                    <span>Begin Your Journey</span>
+                </button>
+                <button class="glass px-8 py-4 rounded-full hover:bg-white hover:bg-opacity-10 transition-all duration-300">
+                    <i class="fas fa-play mr-3"></i>Watch Our Story
+                </button>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div class="w-6 h-10 border-2 border-yellow-400 rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-yellow-400 rounded-full mt-2 animate-pulse"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-gradient-to-b from-black to-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="fade-in">
+                    <h2 class="text-5xl playfair gradient-text mb-8">Our Story</h2>
+                    <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+                        For over a decade, Eternal Moments has been the premier destination for couples seeking extraordinary weddings. We believe that every love story is unique and deserves to be celebrated with unmatched elegance and personal touches.
+                    </p>
+                    <p class="text-lg text-gray-300 mb-8 leading-relaxed">
+                        Our team of award-winning planners, designers, and coordinators work tirelessly to transform your vision into a breathtaking reality, creating memories that will last a lifetime.
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-8 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl gradient-text font-bold playfair mb-2">500+</div>
+                            <div class="text-gray-400">Weddings Planned</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl gradient-text font-bold playfair mb-2">15+</div>
+                            <div class="text-gray-400">Years Experience</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl gradient-text font-bold playfair mb-2">98%</div>
+                            <div class="text-gray-400">Happy Couples</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-luxury">
+                        <span>Learn More About Us</span>
+                    </button>
+                </div>
+                
+                <div class="slide-in-right">
+                    <div class="relative">
+                        <div class="glass p-8 rounded-3xl hover-lift">
+                            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                                 alt="Elegant wedding ceremony" 
+                                 class="w-full h-96 object-cover rounded-2xl mb-6">
+                            <h3 class="text-2xl playfair gradient-text mb-4">Excellence in Every Detail</h3>
+                            <p class="text-gray-300">
+                                From intimate ceremonies to grand celebrations, we orchestrate every moment with precision and passion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 bg-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl playfair gradient-text mb-6">Our Services</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Comprehensive wedding planning services tailored to your unique vision and style
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Luxury Planning</h3>
+                    <p class="text-gray-300 mb-6">
+                        Complete end-to-end wedding planning with attention to every luxurious detail, from venue selection to final send-off.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Venue Selection & Booking</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Vendor Coordination</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Timeline Management</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Day-of Coordination</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Design & Styling</h3>
+                    <p class="text-gray-300 mb-6">
+                        Bespoke design services that reflect your personality and create an unforgettable visual experience for your guests.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Custom Color Palettes</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Floral Arrangements</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Lighting Design</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Décor Styling</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Intimate Ceremonies</h3>
+                    <p class="text-gray-300 mb-6">
+                        Personalized planning for intimate weddings and elopements that focus on your love story and meaningful moments.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Boutique Venues</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Personalized Ceremonies</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Photography Coordination</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Reception Planning</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Destination Weddings</h3>
+                    <p class="text-gray-300 mb-6">
+                        Exotic destination wedding planning with local expertise and seamless coordination for you and your guests.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Location Scouting</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Travel Coordination</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Legal Requirements</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Guest Accommodations</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Catering & Events</h3>
+                    <p class="text-gray-300 mb-6">
+                        Gourmet catering and event services featuring world-class chefs and customized menus for your special day.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Custom Menus</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Wine Pairings</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Service Staff</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Specialty Dietary Options</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card p-8 rounded-3xl hover-lift fade-in">
+                    <div class="text-4xl text-yellow-400 mb-6">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Day-of Coordination</h3>
+                    <p class="text-gray-300 mb-6">
+                        Professional day-of coordination ensuring your wedding runs smoothly while you focus on celebrating your love.
+                    </p>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Timeline Execution</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Vendor Management</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Emergency Handling</li>
+                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>Stress-free Experience</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="py-24 bg-gradient-to-b from-gray-900 to-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl playfair gradient-text mb-6">Our Process</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    A seamless journey from initial consultation to your perfect wedding day
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="timeline-item pb-12 slide-in-left">
+                    <div class="glass p-8 rounded-3xl ml-8">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl gradient-text playfair font-bold mr-4">01</div>
+                            <h3 class="text-2xl playfair text-yellow-400">Initial Consultation</h3>
+                        </div>
+                        <p class="text-gray-300">
+                            We begin with an in-depth consultation to understand your vision, style preferences, budget, and timeline. This foundation allows us to create a personalized planning approach.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item pb-12 slide-in-right">
+                    <div class="glass p-8 rounded-3xl ml-8">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl gradient-text playfair font-bold mr-4">02</div>
+                            <h3 class="text-2xl playfair text-yellow-400">Design & Planning</h3>
+                        </div>
+                        <p class="text-gray-300">
+                            Our design team creates mood boards, selects venues, and develops a comprehensive plan. We present multiple options and refine details based on your feedback.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item pb-12 slide-in-left">
+                    <div class="glass p-8 rounded-3xl ml-8">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl gradient-text playfair font-bold mr-4">03</div>
+                            <h3 class="text-2xl playfair text-yellow-400">Vendor Selection</h3>
+                        </div>
+                        <p class="text-gray-300">
+                            We coordinate with our network of premium vendors including photographers, florists, musicians, and caterers to ensure every aspect meets our high standards.
+                        </p>
+                    </div>
+                </div>
+                
+                                        <div class="timeline-item pb-12 slide-in-right">
+                    <div class="glass p-8 rounded-3xl ml-8">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl gradient-text playfair font-bold mr-4">04</div>
+                            <h3 class="text-2xl playfair text-yellow-400">Final Preparations</h3>
+                        </div>
+                        <p class="text-gray-300">
+                            In the weeks leading up to your wedding, we finalize all details, conduct rehearsals, and ensure every element is perfectly coordinated for your special day.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item slide-in-left">
+                    <div class="glass p-8 rounded-3xl ml-8">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl gradient-text playfair font-bold mr-4">05</div>
+                            <h3 class="text-2xl playfair text-yellow-400">Your Perfect Day</h3>
+                        </div>
+                        <p class="text-gray-300">
+                            On your wedding day, our team manages every detail behind the scenes, allowing you to be fully present and enjoy every magical moment with your loved ones.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-24 bg-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl playfair gradient-text mb-6">Our Portfolio</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    A glimpse into the extraordinary weddings we've had the privilege to create
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Elegant outdoor ceremony" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Garden Elegance</h3>
+                        <p class="text-sm">Romantic outdoor ceremony</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Luxurious ballroom reception" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Grand Ballroom</h3>
+                        <p class="text-sm">Opulent reception celebration</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Beach destination wedding" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Seaside Romance</h3>
+                        <p class="text-sm">Destination beach wedding</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Intimate vineyard ceremony" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Vineyard Bliss</h3>
+                        <p class="text-sm">Intimate wine country celebration</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Modern city wedding" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Urban Sophistication</h3>
+                        <p class="text-sm">Contemporary city celebration</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item h-80 fade-in">
+                    <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Rustic barn wedding" 
+                         class="w-full h-full object-cover">
+                    <div class="gallery-overlay text-center text-white">
+                        <h3 class="text-xl playfair mb-2">Rustic Charm</h3>
+                        <p class="text-sm">Countryside barn celebration</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="btn-luxury">
+                    <span>View Full Portfolio</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-24 bg-gradient-to-b from-gray-900 to-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl playfair gradient-text mb-6">Love Stories</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Hear from the couples whose dreams we've had the honor to bring to life
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="testimonial-card p-8 rounded-3xl fade-in">
+                    <div class="flex items-center mb-6">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616c4b41e74?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="Sarah Johnson" 
+                             class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-lg font-semibold gradient-text">Sarah & Michael</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic mb-4">
+                        "Eternal Moments transformed our vision into the most magical day of our lives. Every detail was perfect, and we couldn't have asked for a more professional and caring team."
+                    </p>
+                    <div class="text-sm text-gray-400">Garden Wedding • June 2024</div>
+                </div>
+                
+                <div class="testimonial-card p-8 rounded-3xl fade-in">
+                    <div class="flex items-center mb-6">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="David Chen" 
+                             class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-lg font-semibold gradient-text">Emma & David</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic mb-4">
+                        "From our first meeting to the last dance, the team exceeded every expectation. Our destination wedding in Tuscany was absolutely breathtaking!"
+                    </p>
+                    <div class="text-sm text-gray-400">Destination Wedding • September 2024</div>
+                </div>
+                
+                <div class="testimonial-card p-8 rounded-3xl fade-in">
+                    <div class="flex items-center mb-6">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="Maria Rodriguez" 
+                             class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-lg font-semibold gradient-text">Maria & James</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic mb-4">
+                        "Working with Eternal Moments was the best decision we made. They handled everything with such grace and professionalism. Our wedding was pure perfection!"
+                    </p>
+                    <div class="text-sm text-gray-400">Ballroom Wedding • October 2024</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl playfair gradient-text mb-6">Let's Create Magic Together</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Ready to begin planning your perfect wedding? We'd love to hear your story and discuss how we can bring your vision to life.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-16">
+                <div class="slide-in-left">
+                    <div class="glass p-8 rounded-3xl">
+                        <h3 class="text-3xl playfair gradient-text mb-8">Get In Touch</h3>
+                        
+                        <div class="space-y-6 mb-8">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-map-marker-alt text-black"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-yellow-400">Our Studio</h4>
+                                    <p class="text-gray-300">123 Luxury Lane, Beverly Hills, CA 90210</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-phone text-black"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-yellow-400">Call Us</h4>
+                                    <p class="text-gray-300">(555) 123-ETERNAL</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-envelope text-black"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-yellow-400">Email Us</h4>
+                                    <p class="text-gray-300">hello@eternalmoments.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-clock text-black"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-yellow-400">Office Hours</h4>
+                                    <p class="text-gray-300">Mon-Fri: 9AM-6PM | Sat: 10AM-4PM</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                <i class="fab fa-instagram text-black"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                <i class="fab fa-facebook text-black"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                <i class="fab fa-pinterest text-black"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                <i class="fab fa-twitter text-black"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-in-right">
+                    <form class="glass p-8 rounded-3xl space-y-6" id="contact-form">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                                <input type="text" class="form-input w-full" placeholder="Your first name" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                                <input type="text" class="form-input w-full" placeholder="Your last name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                                <input type="email" class="form-input w-full" placeholder="your@email.com" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                                <input type="tel" class="form-input w-full" placeholder="(555) 123-4567">
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Wedding Date</label>
+                                <input type="date" class="form-input w-full">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Guest Count</label>
+                                <select class="form-input w-full">
+                                    <option>Select guest count</option>
+                                    <option>Under 50</option>
+                                    <option>50-100</option>
+                                    <option>100-200</option>
+                                    <option>200-300</option>
+                                    <option>300+</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Wedding Style</label>
+                            <select class="form-input w-full">
+                                <option>Select your style preference</option>
+                                <option>Classic & Elegant</option>
+                                <option>Modern & Chic</option>
+                                <option>Rustic & Natural</option>
+                                <option>Glamorous & Luxurious</option>
+                                <option>Bohemian & Free-spirited</option>
+                                <option>Destination & Exotic</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Tell Us About Your Dream Wedding</label>
+                            <textarea class="form-input w-full h-32 resize-none" placeholder="Share your vision, ideas, and any specific requirements..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-luxury w-full">
+                            <span>Send Message</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl playfair gradient-text mb-4">Eternal Moments</h3>
+                    <p class="text-gray-400 mb-6">
+                        Creating extraordinary weddings that celebrate your unique love story with unparalleled elegance.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-pinterest text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-4">Services</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Luxury Planning</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Design & Styling</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Destination Weddings</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Day-of Coordination</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Catering & Events</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#gallery" class="hover:text-white transition-colors">Portfolio</a></li>
+                        <li><a href="#testimonials" class="hover:text-white transition-colors">Testimonials</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-4">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">
+                        Subscribe for wedding inspiration and exclusive offers.
+                    </p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="form-input flex-1 rounded-r-none">
+                        <button class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 rounded-r-lg hover:from-yellow-500 hover:to-yellow-700 transition-all">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Eternal Moments. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        // Three.js Background Animation
+        let scene, camera, renderer, particles, particleSystem;
+
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('hero-canvas'),
+                alpha: true,
+                antialias: true
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create particle system
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 200;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 100;
+                positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = (Math.random() - 0.5) * 100;
+
+                const color = new THREE.Color();
+                color.setHSL(0.1, 0.8, Math.random() * 0.5 + 0.5);
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+
+            camera.position.z = 50;
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (particleSystem) {
+                particleSystem.rotation.x += 0.001;
+                particleSystem.rotation.y += 0.002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        // Initialize Three.js when page loads
+        initThree();
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(0, 0, 0, 0.9)';
+                navbar.style.backdropFilter = 'blur(20px)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.05)';
+                navbar.style.backdropFilter = 'blur(20px)';
+            }
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animation elements
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<span>Sending...</span>';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = '<span>Message Sent!</span>';
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    this.reset();
+                }, 2000);
+            }, 1500);
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax');
+            
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Add floating animation delay to elements
+        document.querySelectorAll('.float').forEach((element, index) => {
+            element.style.animationDelay = `${index * 0.2}s`;
+        });
+
+        // Newsletter subscription
+        document.querySelector('footer button').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = this.previousElementSibling.value;
+            
+            if (email) {
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                this.style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    this.style.background = 'linear-gradient(to right, #facc15, #eab308)';
+                    this.previousElementSibling.value = '';
+                }, 2000);
+            }
